@@ -135,10 +135,11 @@ def login():
     else:
         st.sidebar.error("Invalid credentials")
 
-# Logout button
+# Logout function to clear session state
 def logout():
     st.sidebar.button("Logout")
+    st.session_state.logged_in = False
 
 if __name__ == "__main__":
     login()
-    logout()
+    
