@@ -125,5 +125,20 @@ def main():
         # Display the image of the predicted crop
         display_crop_image(crop)
 
+# Login system
+def login():
+    username = st.sidebar.text_input("Username")
+    password = st.sidebar.text_input("Password", type="password")
+    if username == "admin" and password == "admin":
+        st.sidebar.success("Logged in as admin")
+        main()
+    else:
+        st.sidebar.error("Invalid credentials")
+
+# Logout button
+def logout():
+    st.sidebar.button("Logout")
+
 if __name__ == "__main__":
-    main()
+    login()
+    logout()
