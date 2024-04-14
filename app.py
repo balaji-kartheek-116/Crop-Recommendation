@@ -96,57 +96,34 @@ def display_crop_image(crop):
 def main():
     st.title("PrecisionPlantAI: Crop Prediction")
     st.image("crops.jpg")
-    
-    # Login Section
-    logged_in = False
-    if 'logged_in' not in st.session_state:
-        st.session_state.logged_in = False
+    # Specific threshold values for temperature, humidity, rainfall, N, P, and K
+    N = st.slider("Ratio of Nitrogen content in soil (kg/ha)", min_value=0, max_value=200, step=1)
+    P = st.slider("Ratio of Phosphorous content in soil (kg/ha)", min_value=0, max_value=200, step=1)
+    K = st.slider("Ratio of Potassium content in soil (kg/ha)", min_value=0, max_value=200, step=1)
+    temperature = st.slider("Temperature (°C)", min_value=0, max_value=40, step=1)
+    humidity = st.slider("Relative Humidity (%)", min_value=0, max_value=100, step=1)
+    ph = st.slider("Soil pH", min_value=0, max_value=14, step=1)  # Adjusted step to 1
+    rainfall = st.slider("Rainfall (mm)", min_value=0, max_value=500, step=1)
 
-    if not st.session_state.logged_in:
-        username = st.sidebar.text_input("Username")
-        password = st.sidebar.text_input("Password", type="password")
-        if st.sidebar.button("Login"):
-            if username == "admin" and password == "admin":
-                st.success("Logged in successfully!")
-                st.session_state.logged_in = True
-                logged_in = True
-            else:
-                st.error("Incorrect username or password.")
+    # Make a prediction using Naive Bayes model
+    if st.button("Predict"):
+        crop, season = predict_crop_and_season(N, P, K, temperature, humidity, ph, rainfall)
+        st.success(f"The predicted crop is: {crop}")
+        if season:
+            st.info(f"Suggested season for planting: {season}")
+        else:
+            st.warning("Conditions do not match any specific season.")
 
-    if logged_in:
-        # Specific threshold values for temperature, humidity, rainfall, N, P, and K
-        N = st.slider("Ratio of Nitrogen content in soil (kg/ha)", min_value=0, max_value=200, step=1)
-        P = st.slider("Ratio of Phosphorous content in soil (kg/ha)", min_value=0, max_value=200, step=1)
-        K = st.slider("Ratio of Potassium content in soil (kg/ha)", min_value=0, max_value=200, step=1)
-        temperature = st.slider("Temperature (°C)", min_value=0, max_value=40, step=1)
-        humidity = st.slider("Relative Humidity (%)", min_value=0, max_value=100, step=1)
-        ph = st.slider("Soil pH", min_value=0, max_value=14, step=1)  # Adjusted step to 1
-        rainfall = st.slider("Rainfall (mm)", min_value=0, max_value=500, step=1)
-
-        # Make a prediction using Naive Bayes model
-        if st.button("Predict"):
-            crop, season = predict_crop_and_season(N, P, K, temperature, humidity, ph, rainfall)
-            st.success(f"The predicted crop is: {crop}")
-            if season:
-                st.info(f"Suggested season for planting: {season}")
-            else:
-                st.warning("Conditions do not match any specific season.")
-
-            # Display recommended fertilizers based on predicted crop
-            if crop.lower() in fertilizer_recommendations:
-                st.subheader("Recommended Fertilizers:")
-                for fertilizer in fertilizer_recommendations[crop.lower()]:
-                    st.write(f"- {fertilizer}")
-            else:
-                st.warning("No fertilizer recommendations available for the predicted crop.")
-            
-            # Display the image of the predicted crop
-            display_crop_image(crop)
-
-        # Logout button
-        if st.sidebar.button("Logout"):
-            st.session_state.logged_in = False
-            st.success("Logged out successfully!")
+        # Display recommended fertilizers based on predicted crop
+        if crop.lower() in fertilizer_recommendations:
+            st.subheader("Recommended Fertilizers:")
+            for fertilizer in fertilizer_recommendations[crop.lower()]:
+                st.write(f"- {fertilizer}")
+        else:
+            st.warning("No fertilizer recommendations available for the predicted crop.")
+        
+        # Display the image of the predicted crop
+        display_crop_image(crop)
 
 if __name__ == "__main__":
     main()
