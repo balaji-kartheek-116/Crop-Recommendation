@@ -94,8 +94,6 @@ def display_crop_image(crop):
         st.warning("No image available for the predicted crop.")
 
 def main():
-    st.title("PrecisionPlantAI: Crop Prediction")
-    st.image("crops.jpg")
     # Specific threshold values for temperature, humidity, rainfall, N, P, and K
     N = st.slider("Ratio of Nitrogen content in soil (kg/ha)", min_value=0, max_value=200, step=1)
     P = st.slider("Ratio of Phosphorous content in soil (kg/ha)", min_value=0, max_value=200, step=1)
@@ -129,16 +127,15 @@ def main():
 def login():
     username = st.sidebar.text_input("Username")
     password = st.sidebar.text_input("Password", type="password")
+    st.title("PrecisionPlantAI: Crop Prediction")
+    st.image("crops.jpg")
     if username == "admin" and password == "admin":
         st.sidebar.success("Logged in as admin")
         main()
     else:
         st.sidebar.error("Invalid credentials")
 
-# Logout function to clear session state
-def logout():
-    st.sidebar.button("Logout")
-    st.session_state.logged_in = False
+
 
 if __name__ == "__main__":
     login()
